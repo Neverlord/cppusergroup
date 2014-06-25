@@ -10,15 +10,20 @@
 // bool Equal(bs::path, bs::path)
 // Hash(bs::path) -> Comparable (operator<)
 
+template <typename T>
+struct find_dups_result {
+    typedef std::vector<std::set<typename std::remove_reference<T>::type>> type;
+};
+
 template <typename ForwardIterator, typename Equal, typename Hash>
 auto find_dups(ForwardIterator first,
                ForwardIterator last,
                Equal equal,
-               Hash hash) -> std::vector<std::set<typename std::remove_reference<decltype(*first)>::type>> {
+               Hash hash)
+-> typename find_dups_result<decltype(*first)>::type {
     using namespace std;
-    typedef typename std::remove_reference<decltype(*first)>::type path_type;
-    //map<decltype(hash(*first)), set<path_type>> res;
-    map<int, set<string>> res;
+    using path_type = typename remove_reference<decltype(*first)>::type;
+    map<decltype(hash(*first)), set<path_type>> res;
     for (; first != last; ++first) {
         res[hash(*first)].emplace(*first);
     }
