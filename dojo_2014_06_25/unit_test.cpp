@@ -10,19 +10,20 @@ namespace bs = boost::filesystem;
 BOOST_AUTO_TEST_CASE(nodups) {
     vector<string> testpaths = { ".", ".." };
     auto res = find_dups(begin(testpaths),
-                        end(testpaths),
-                        [] { return false; },
-                        [](const bs::path&) { return 1; });
+                         end(testpaths),
+                         [](const string&, const string&) { return false; },
+                         [](const string&) { return 1; });
     //return res.empty() ? 0 : 666;
     BOOST_CHECK(res.empty());
 }
 
 BOOST_AUTO_TEST_CASE(somedups) {
     vector<string> testpaths = { ".", ".." };
+    string bla = *begin(testpaths);
     auto res = find_dups(begin(testpaths),
-                        end(testpaths),
-                        [] { return true; },
-                        [](const bs::path&) { return 1; });
+                         end(testpaths),
+                         [](const string&, const string&) { return true; },
+                         [](const string&) { return 1; });
     //return res.empty() ? 0 : 666;
     BOOST_CHECK(!res.empty());
 }
