@@ -50,3 +50,12 @@ BOOST_AUTO_TEST_CASE(somedups) {
     //return res.empty() ? 0 : 666;
     BOOST_CHECK(!res.empty());
 }
+
+BOOST_AUTO_TEST_CASE(gitdups) {
+    auto res = find_dups(bs::recursive_directory_iterator(bs::path("../.git")),
+                         bs::recursive_directory_iterator(),
+                         my_equal,
+                         my_hash);
+    //return res.empty() ? 0 : 666;
+    BOOST_CHECK(res.empty());
+}
