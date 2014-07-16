@@ -21,6 +21,16 @@ size_t my_hash(const bs::path &p)
     return f(buffer);
 }
 
+bool my_equal(const bs::path &p1,const bs::path &p2)
+{
+    typedef std::istreambuf_iterator<char> iterator;
+    std::ifstream f1(p1.string()), f2(p2.string());
+    std::string b1{iterator(f1),iterator()};
+    std::string b2{iterator(f2),iterator()};
+
+    return b1==b2;
+}
+
 BOOST_AUTO_TEST_CASE(nodups) {
     vector<string> testpaths{ ".", ".." };
     auto res = find_dups(begin(testpaths),
@@ -35,7 +45,7 @@ BOOST_AUTO_TEST_CASE(somedups) {
     vector<bs::path> testpaths = { "test1.hpp","test2.hpp"};
     auto res = find_dups(begin(testpaths),
                          end(testpaths),
-                         [](const bs::path&, const bs::path&) { return true; },
+                         my_equal,
                          my_hash);
     //return res.empty() ? 0 : 666;
     BOOST_CHECK(!res.empty());
