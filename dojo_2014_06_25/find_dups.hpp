@@ -25,11 +25,13 @@ auto find_dups(ForwardIterator first,
     using path_type = typename remove_reference<decltype(*first)>::type;
     map<decltype(hash(*first)), set<path_type>> res;
     for (; first != last; ++first) {
-        res[hash(*first)].emplace(*first);
+        res[hash(*first)].insert(*first);
     }
     for (auto& kvp : res) {
-        if (kvp.second.size() > 1 && equal(*kvp.second.begin(), *kvp.second.rbegin())) {
-            return vector<set<string>>{move(kvp.second)};
+        if (kvp.second.size() > 1 && 
+            equal(*kvp.second.begin(), *kvp.second.rbegin())) 
+        {
+            return vector<set<path_type>>{move(kvp.second)};
         }
     }
     return { };
