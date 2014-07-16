@@ -11,9 +11,12 @@
 // Hash(bs::path) -> Comparable (operator<)
 
 template <typename T>
-struct find_dups_result {
+struct find_dups_result 
+{
     typedef std::vector<std::set<typename std::remove_reference<T>::type>> type;
 };
+
+
 
 template <typename ForwardIterator, typename Equal, typename Hash>
 auto find_dups(ForwardIterator first,
@@ -24,15 +27,37 @@ auto find_dups(ForwardIterator first,
     using namespace std;
     using path_type = typename remove_reference<decltype(*first)>::type;
     map<decltype(hash(*first)), set<path_type>> res;
-    for (; first != last; ++first) {
+    vector<set<path_type>> result;
+
+    for (; first != last; ++first) 
         res[hash(*first)].insert(*first);
-    }
-    for (auto& kvp : res) {
-        if (kvp.second.size() > 1 && 
-            equal(*kvp.second.begin(), *kvp.second.rbegin())) 
+    
+    for (auto& kvp : res) 
+    {
+        auto &my_set = kvp.second;
+        set<path_type> my_dups;
+
+        while (my_set.size() > 1 ) 
         {
-            return vector<set<path_type>>{move(kvp.second)};
+            auto my_first = my_set.begin();
+            my_first++;
+            while(my_first != my_set.end())
+            {
+                if(equal(*my_set.begin(),*my_first))
+                {
+                    my_dups.insert(*my_set.begin());
+                    my_dups.insert(*my_first);
+                    my_first = my_set.erase(my_first);
+                }
+                else
+                    ++my_first;
+            }
+                
+            my_set.erase(my_set.begin());
         }
+        
+        if(!my_dups.empty()) result.push_back(my_dups);
     }
-    return { };
+
+    return result;
 }
